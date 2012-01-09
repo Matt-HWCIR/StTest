@@ -1,0 +1,10 @@
+{
+    "name": "StBaldricks",
+    "version": "0.0.1",
+    "dependencies": {
+        "express": "2.5.2",
+        "underscore":"1.2.4",
+        "sunny":"0.0.4",
+        "jade":"0.20.0"
+    }
+}

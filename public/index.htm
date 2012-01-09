@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html  lang="en"> 
+<head>
+<title>C-SCat</title>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, user-scalable = no,maximum-scale=1.0,minimum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon" sizes="114x115" href="images/StIcon.png" />
+<!--  not working 
+<link rel="apple-touch-startup-image" href="images/Splash.png" />
+ -->
+<link rel="stylesheet/less" href="less/bootstrap.less" media="all" />
+<link rel="stylesheet/less" href="less/app.less" media="all">
+
+<script src="scripts/libs/jquery-1.6.4.min.js"></script>
+<script src="scripts/libs/less-1.1.5.min.js"></script>
+<script src="scripts/libs/jquery-ui-1.8.16.js"></script>
+<script src="scripts/libs/touchable.js"></script>
+<script src="scripts/libs/taffy-min.js"></script>
+<script src="scripts/libs/bootstrap-modal.js"></script>
+<script src="scripts/libs/shifty.js"></script>
+<script data-main="scripts/app" src="scripts/libs/require.js"></script>
+
+</head>
+
+<body>
+
+	<div id='pages' style="display: none">
+		<div id='navBar'>
+			<div id="navButtons">
+				<button id="continueButton" class="btn success large">Continue</button>
+			</div>
+			<div id="bottomTitle">
+				<h2>
+					St. Baldrick's Foundation - <span id="sideBarId">Participant
+						#888</span>
+				</h2>
+			</div>
+			<div id="appButtons">
+				<button id="backButton" class="btn danger large">Go Back</button>
+			</div>
+		</div>
+		<div id='drawPad'></div>
+		<div id='leftBar'>
+			<div id='leftBarContent'>
+				<h3 id="sideBarTitle"></h3>
+				<div id="sideBarText"></div>
+
+
+			</div>
+
+
+		</div>
+
+
+		<div id="dialog" data-backdrop='static' style="display: none"
+			class="modal">
+			<div class="modal-header">
+				<h3 id="dialogTitle"></h3>
+			</div>
+			<div class="modal-body">
+				<div id="thankYouForm" style="display: none">
+					<h4>You are now finished with the survey.</h4>
+					<p>Your participation is an important contribution to St.
+						Baldrick's fight against kids' cancer.</p>
+					<p>
+						<strong>Thank You!</strong>
+					</p>
+				</div>
+				<form class="form-stacked" id="symptomForm" style="display: none">
+					<fieldset>
+						<div class="clearfix">
+							<label for="xlInput">What do you think causes it?</label>
+							<div class="input">
+								<input class="span8" id="symptomCause" size="30" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">What do you think helps make it
+								better?</label>
+							<div class="input">
+								<input class="span8" size="30" id="symptomBetter" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">What do you think makes it worse?</label>
+							<div class="input">
+								<input class="span8" size="30" id="symptomWorse" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">Have YOU (not your doctors or
+								nurses) tried anything that made it better?<br />If yes, what
+								was it?
+							</label>
+							<div class="input">
+								<input class="span8" size="30" id="symptomDrBetter" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">Have YOU (not your doctors or
+								nurses) tried anything that made it worse?<br />If yes, what was
+								it?
+							</label>
+							<div class="input">
+								<input class="span8" size="30" id="symptomDrWorse" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">What effect does this symptom have
+								on your day-to-day life?</label>
+							<div class="input">
+								<input class="span8" size="30" id="symptomEffect" type="text">
+							</div>
+						</div>
+					</fieldset>
+				</form>
+				<form class="form-stacked" id="lineForm" style="display: none">
+					<fieldset>
+						<div class="clearfix">
+							<label for="xlInput">How do you think these symptoms are
+								connected?</label>
+							<div class="input">
+								<input class="span8" id="lineConnected" size="30" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">Do you experience all of them at the
+								same time?</label>
+							<div class="input">
+								<input class="span8" size="30" id="lineAll" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">If you don't experience all the
+								symptoms at the same time, do you usually experience them in any
+								order (does one symptom happen first, then another symptom)?</label>
+							<div class="input">
+								<input class="span8" size="30" id="lineNotAll" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">If you usually experience symptoms
+								in an order, please list the symptoms in the order they occur</label>
+							<div class="input">
+								<input class="span8" size="30" id="lineUsually" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">Do you always experience them in
+								that order?</label>
+							<div class="input">
+								<input class="span8" size="30" id="lineOrder" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">If you sometimes don't experience
+								them in that order, what do you think makes the order different?</label>
+							<div class="input">
+								<input class="span8" size="30" id="lineDifferent" type="text">
+							</div>
+						</div>
+					</fieldset>
+				</form>
+				<form class="form-stacked" id="groupForm" style="display: none">
+					<fieldset>
+						<div class="clearfix">
+							<label for="xlInput">What name would you give to this
+								symptom group?</label>
+							<div class="input">
+								<input class="span8" id="groupName" size="30" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">What do you think is the cause of
+								this symptom group?</label>
+							<div class="input">
+								<input class="span8" size="30" id="groupCause" type="text">
+							</div>
+						</div>
+						<div class="clearfix">
+							<label for="xlInput">What effect does this symptom group
+								have on your daily activities?</label>
+							<div class="input">
+								<input class="span8" size="30" id="groupEffect" type="text">
+							</div>
+						</div>
+
+					</fieldset>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button id="saveDialog" class="btn primary large">Save</button>
+				<button class="btn secondary large" id="cancelDialog">Cancel</button>
+			</div>
+		</div>
+
+
+
+
+	</div>
+	<div id='intro' class="intro" style="display: none">
+		
+		<div style="text-align: center">
+			<h1>C-SCat - Computerized Symptom Capture Tool</h1>
+		</div>
+		
+		<div class="introText">
+			<h3 style="display: inline">Enter Participant Number:</h3>
+			<input maxlength="3" id="participantNumber" type='text' />
+		</div>
+		<div>
+			
+			<button id="introButton" class="btn primary large" type='button'>Continue</button>
+		</div>
+		
+		
+	</div>
+	<img id="logo" class="intro" src="images/SBFLogo275.png" />
+</body>
+</html>
