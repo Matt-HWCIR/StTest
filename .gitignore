@@ -1,6 +1,5 @@
 node_modules/*
 .DS_Store
 .monitor
-.svn/*
 .idea/*
 .svn
