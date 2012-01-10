@@ -6,7 +6,7 @@ html,body {
 body {
 
     color: #2F2F2F;
-    background: #dddcd6 url(images/bg.png);
+    background: #dddcd6 url(../images/bg.png);
 
 }
 div,canvas,body{
