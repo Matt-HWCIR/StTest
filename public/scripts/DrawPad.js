@@ -36,6 +36,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 
 
 	module.initChime=function(){
+        console.log('chime initialized');
 		chime=new Audio("sounds/button-17.mp3");
 		chime.load();
 	};
