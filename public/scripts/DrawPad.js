@@ -40,6 +40,12 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		chime.load();
 	};
 
+    window.setTimeout(function(){
+        module.initChime();
+    },500);
+
+
+
 	module.playChime=function(){
 		if(chime==null){
 			module.initChime();
