@@ -39,6 +39,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
         console.log('chime initialized again');
 		chime=new Audio("sounds/button-17.mp3");
 		chime.load();
+        chime.play();
 	};
 
     window.setTimeout(function(){
