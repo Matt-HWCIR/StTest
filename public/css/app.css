@@ -1,134 +1,139 @@
 
 html,body {
-	height: 100%;
-	
+    height: 100%;
+
 }
-
-
-
 body {
-	
-	color: #2F2F2F;
-	background: #dddcd6 url(../images/bg.png);
-	
+
+    color: #2F2F2F;
+    background: #dddcd6 url(images/bg.png);
+
 }
 div,canvas,body{
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 .modal{
-	background-color:#f6f6f4;
+    background-color:#f6f6f4;
 }
 .modal-header{
-	 background-color: #dddcd6;
+    background-color: #dddcd6;
 }
 .modal-footer{
-	  background-color: #eeeeeb;
+    background-color: #eeeeeb;
 }
 #introButton{
-	display:none;
+    display:none;
 }
 .introText{
-	margin-top:20px;
+    margin-top:20px;
 }
 .introText input{
-	width:70px;
+    width:70px;
 }
 #pages{
-	position:absolute;
-	top:0px;
-	bottom:0px;
-	left:0px;
-	right:0px;
-	display:none;
+    position:absolute;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+    display:none;
 }
 
 
 #navButtons{
-	position: absolute;
-	bottom:10px;
-	right:10px;
+    position: absolute;
+    bottom:10px;
+    right:10px;
 }
 #bottomTitle{
-	text-align:center;
-	margin-top:10px;
+    text-align:center;
+    margin-top:10px;
 }
 #appButtons{
-	position: absolute;
-	bottom:10px;
-	left:10px;
+    position: absolute;
+    bottom:10px;
+    left:10px;
 }
 #drawPad{
-	position:absolute;
-	left:216px;
-	bottom:61px;
-	top:0px;
-	right:0px;
-	
+    position:absolute;
+    left:216px;
+    bottom:61px;
+    top:0px;
+    right:0px;
+
 }
 #leftBar{
-	position:absolute;
-	left:0px;
-	top:0px;
-	bottom:60px;
-	width:215px;
-	
-	border-right: 1px solid #EEE;
+    position:absolute;
+    left:0px;
+    top:0px;
+    bottom:60px;
+    width:215px;
+
+    border-right: 1px solid #EEE;
 }
 #navBar{
-	position:absolute;
-	border-top: 1px solid #EEE;
-	height:60px;
-	bottom:0px;
-	left:0px;
-	right:0px;
+    position:absolute;
+    border-top: 1px solid #EEE;
+    height:60px;
+    bottom:0px;
+    left:0px;
+    right:0px;
 }
 #leftBarContent{
-	position:absolute;
-	left:10px;
-	right:10px;
-	top:10px;
+    position:absolute;
+    left:10px;
+    right:10px;
+    top:10px;
 }
 
 
 .text{
-	font-size:20px;
+    font-size:20px;
 }
 
 .dialog{
-	width:500px;
-	padding:15px;
-	height:350px;
-	background-color:red;
-	position:absolute;
-	top:50%;
-	left:50%;
-	margin-left:-250px;
-	margin-top:-225px;
-	opacity:1;
-	display:none;
+    width:500px;
+    padding:15px;
+    height:350px;
+    background-color:red;
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin-left:-250px;
+    margin-top:-225px;
+    opacity:1;
+    display:none;
 }
 
 #intro{
-	padding-top:50px;
-	text-align:center;
-	position:relative;
-	width:100%;
-	top:0px;
-	left:0px;
-	right:0px;
-	bottom:0px;
+    padding-top:160px;
+    text-align:center;
+    position:relative;
+    width:100%;
+    top:0px;
+    left:0px;
+    right:0px;
+    bottom:0px;
 }
 
 
-.logo{
-	
-	display:inline-block;
-	padding-top:100px;
+#logo{
+
+    display:inline-block;
+    position: absolute;
+    bottom:30px;
+    right: 20px;
 }
 
 .introText{
-	font-size:40px;
-	padding-bottom:30px;	
+    font-size:40px;
+    padding-bottom:30px;
 }
+
+.sideBarText{
+    font-size:17px;
+}
+
+

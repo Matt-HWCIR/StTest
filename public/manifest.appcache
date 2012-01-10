@@ -1,21 +1,13 @@
 CACHE MANIFEST
 
-# Version 20.1
+# Version 24.1
 
 CACHE:
 
 index.htm
 
-less/bootstrap.less
-less/reset.less
-less/variables.less
-less/mixins.less
-less/scaffolding.less
-less/type.less
-less/forms.less
-less/tables.less
-less/patterns.less
-less/app.less
+css/bootstrap.css
+css/app.css
 
 scripts/libs/jquery-1.6.4.min.js
 scripts/libs/less-1.1.5.min.js
