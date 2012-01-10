@@ -45,7 +45,6 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			module.initChime();
 		}
 		if(chime!=null){
-			//alert('play chime');
 			try{
                 if(chime.currentTime>0){
                     chime.pause();
