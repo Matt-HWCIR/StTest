@@ -36,23 +36,23 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 
 
 	module.initChime=function(){
-        console.log('chime initialized again');
-		chime=new Audio("sounds/button-17.mp3");
-		chime.load();
-        chime.play();
+
+
 	};
-
-    window.setTimeout(function(){
-        module.initChime();
-    },500);
-
-
 
 	module.playChime=function(){
 		if(chime==null){
-			module.initChime();
-		}
-		if(chime!=null){
+            console.log('chime is not initialized');
+            try{
+                chime=new Audio("sounds/button-17.mp3");
+                chime.load();
+                chime.play();
+            }catch(loadChimeError){
+                console.log('**** Load Chime Error *****')
+                console.log(loadChimeError);
+            }
+
+		}else{
 			try{
                 if(chime.currentTime>0){
                     chime.pause();
