@@ -56,6 +56,8 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
                 if(chime.currentTime>0){
                     chime.pause();
                     chime.currentTime=0;
+                }else{
+                    chime.load();
                 }
 				chime.play();
 			}catch(x){
