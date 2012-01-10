@@ -1,6 +1,6 @@
 var sunny=require('sunny');
 var conn=sunny.Configuration.fromEnv().connection;
-var containerName="LinderResearch";
+var containerName="linder_research";
 var fs = require('fs');
 var container = null;
 
