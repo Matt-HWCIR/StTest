@@ -72,7 +72,7 @@ exports.putFile=function(fileName,data,callback) {
         console.log('error putting file :');
         console.log(x);
         if(callback){
-            callback();
+            callback(x);
         }
     }
 

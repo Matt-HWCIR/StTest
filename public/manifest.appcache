@@ -1,8 +1,11 @@
 CACHE MANIFEST
 
-# Version 2.1
+# Version 2.33
 
 CACHE:
+
+index.htm
+
 less/bootstrap.less
 less/reset.less
 less/variables.less

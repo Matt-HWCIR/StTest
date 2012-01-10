@@ -41,15 +41,17 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	module.initChime();
 	
 	module.playChime=function(){
-		console.log('playing chime');
 		if(chime==null){
 			module.initChime();
 		}
 		if(chime!=null){
 			//alert('play chime');
 			try{
+                if(chime.currentTime>0){
+                    chime.pause();
+                    chime.currentTime=0;
+                }
 				chime.play();
-				console.log('Played Chime Successfully');
 			}catch(x){
 				console.log('**** error playing chime ****');
 				console.log(x);

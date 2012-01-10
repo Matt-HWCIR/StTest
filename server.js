@@ -29,8 +29,10 @@ app.post('/saveFile',function(req,res){
     var xmlFile=pn+'_'+utils.printDate(d)+".xml";
     var pngFile=pn+'_'+utils.printDate(d)+".png";
     amz.putFile(xmlFile,req.body.xml);
-    amz.putFile(pngFile,amz.convertToImage(req.body.diagram));
-    res.send({});
+    amz.putFile(pngFile,amz.convertToImage(req.body.diagram),function (err){
+        res.send({error:err});
+    });
+
 
 });
 
