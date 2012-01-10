@@ -1,3 +1,7 @@
+//var cfg = require('./config');
+var HOST = null; //"0.0.0.0";
+var PORT = process.env.PORT || 3000;
+
 var express = require('express');
 var amz = require('./as3');
 var utils = require('./utils');
@@ -31,7 +35,8 @@ app.post('/saveFile',function(req,res){
 });
 
 // Start Server
-var port = process.env.PORT || 3000;
-app.listen(port, function() {
-    console.log("Listening on " + port);
+console.log('PORT: '+PORT);
+console.log('HOST: '+HOST);
+app.listen(PORT,HOST, function() {
+    console.log("Listening on " + PORT);
 });

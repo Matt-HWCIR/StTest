@@ -7,7 +7,7 @@ EnviornmentVariables - heroku
 	heroku config:add SUNNY_PROVIDER="aws"
 	heroku config:add SUNNY_ACCOUNT=pwd
 	heroku config:add SUNNY_SECRET_KEY=pwd
-	heroku config:add SUNNY_SSL="false"
+	heroku config:add SUNNY_SSL="true"
 
 Server
 	nodemon --debug server.js
