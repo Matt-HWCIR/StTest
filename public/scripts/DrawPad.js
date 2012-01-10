@@ -33,12 +33,28 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	module.canDrawNewLine=false;
 	module.canChangePriority=false;
 	module.canChangeDirection=false;
-	
+
+    module.checkAudio=function(){
+        console.log('checking audio '+new Date());
+        if(chime!=null){
+            if(chime.currentTime>0){
+                chime.pause();
+                window.clearInterval(module.checkAudioInterval);
+            }
+        }
+    };
+
+    module.checkAudioInterval=window.setInterval(function(){
+        module.checkAudio();
+    },30);
+
 	module.initChime=function(){
 		chime=new Audio("sounds/button-17.mp3");
 		chime.load();
+        chime.play();
 	};
 	module.initChime();
+
 	
 	module.playChime=function(){
 		if(chime==null){
