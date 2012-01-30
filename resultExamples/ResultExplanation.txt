@@ -1,0 +1,59 @@
+Results are stored in the following hierarchy:  participantNumber/YYYYMMDDhhmmss/FileName
+
+Images are stored as .png files with the following names:
+
+	Select.png  - Select Symptoms Screen
+	SelectRevised.png -  Revised Select Symptoms Screen  (if user has moved backwards and changed the screen)
+
+	SymptomDetail.png - Symptom Details Screen
+	SymptomDetailRevised.png - Revised Symptom Details Screen   (if user has moved backwards and changed the screen)
+
+	Connections.png - Related Symptoms Screen
+	ConnectionsRevised.png - Revised Related Symptoms Screen (if user has moved backwards and changed the screen)
+
+	Cause.png - Cause Screen
+	CauseRevised.png - Revised Cause Screen
+
+	Groups.png - Groups Screen
+	GroupsRevised.png - Revised Groups Screen (if user has moved backwards and changed the screen)
+
+	Priority.png - Priority Screen
+	PriorityRevised.png - Revised Priority Screen (if user has moved backwards and changed the screen)
+
+	FinalDiagram.png  - Completed Diagram
+
+
+Results.xml  - Textual results
+
+	<results>
+		<participantNumber/>  // Participant Number
+		<diagramIsAccurate/> // true if user said diagram is accurate on the review screen, false if not
+		<symptom>
+			<cause/>    // What do you think causes it?
+			<better/>  // What do you think helps make it better?
+			<worse/>   // What do you think makes it worse?
+			<drBetter/>  // Have YOU (not your doctors or nurses) tried anything that made it better? If yes, what was it?
+			<drWorse/> // Have YOU (not your doctors or nurses) tried anything that made it worse? If yes, what was it?
+			<effect/> // What effect does this symptom have on your day-to-day life?
+			<name/>  // Symptom name
+			<topPriority/>  // If symptom was identified as the top priority for a group
+			<groupName/>  // Primary group the symptom was associated with
+		</symptom>
+
+		<group>
+			<cause/>  // What do you think is the cause of this symptom group?
+			<effect/>   // What effect does this symptom group have on your daily activities?
+			<name/>   // What name would you give to this symptom group?
+		</group>
+		<line>
+			<connected/>  // How do you think these symptoms are connected?
+			<all/>    // Do you experience all of them at thesame time?
+			<notAll/> // If you don't experience all the symptoms at the same time, do you usually experience them in any order (does one symptom happen first, then another symptom)?
+			<usually/>  // If you usually experience symptoms  in an order, please list the symptoms in the order they occur
+			<order/>   // Do you always experience them in that order?
+			<different/> // If you sometimes don't experience them in that order, what do you think makes the order different?
+			<fromSymptom/>  // Symptom the line originate from
+			<toSymptom/>  // Symptom the line pointed to
+		</line>
+	</results>
+
