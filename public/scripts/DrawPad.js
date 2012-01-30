@@ -225,7 +225,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			}else if($('#makeChangesForm').is(':visible')){
 				module.cancelDialog();
 			}else{
-				data.
+				module.saveResults();
 				module.cancelDialog();
 				module.goToPage('Intro');
 			}
