@@ -65,7 +65,7 @@ define(['data','libs/animate'],function(data,animate){
 		
 			
 			
-			ctx.font="13pt Calibri";
+			ctx.font="13pt Arial";
 			ctx.textAlign='center';
 			ctx.textBaseline='middle';
 			ctx.fillStyle='white';

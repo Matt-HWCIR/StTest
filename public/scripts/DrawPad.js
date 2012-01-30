@@ -36,6 +36,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 
 
 	module.initChime=function(){
+		// Do Something with Chime
 
 
 	};
@@ -191,7 +192,6 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		_touchable.bind('longTap',function(event){
 			if(TOOL.longTap)
 				TOOL.longTap(event);
-			
 		});
 		
 		$('#introButton').bind($.app.END_EV,function(event){
@@ -202,6 +202,12 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		});
 		$('#continueButton').bind($.app.END_EV,function(event){
 			module.nextPage();
+		});
+		$('#isAccurate').live($.app.END_EV,function(event){
+			module.nextPage();
+		});
+		$('#notAccurate').live($.app.END_EV,function(event){
+			module.showMakeChangesDialog();
 		});
 		$('#backButton').bind($.app.END_EV,function(event){
 			module.prevPage();
@@ -216,6 +222,8 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 				module.saveLineDetails();
 			}else if($('#groupForm').is(':visible')){
 				module.saveGroup();
+			}else if($('#makeChangesForm').is(':visible')){
+				module.cancelDialog();
 			}else{
 				module.cancelDialog();
 				module.goToPage('Intro');
@@ -223,7 +231,14 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			
 		});
 		$('#cancelDialog').bind($.app.END_EV,function(event){
-			module.cancelDialog();
+			if($('#makeChangesForm').is(':visible')){
+				module.saveResults();
+				module.cancelDialog();
+				module.goToPage('Intro');
+			}else{
+				module.cancelDialog();
+			}
+
 		});
 		
 		
@@ -361,9 +376,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 				effect:item.effect,
 				name:item.name,
 				topPriority:item.topPriority,
-				groupId: item.groupId,
-				groupName:item.groupName,
-				groupColor:item.groupColor
+				groupName:item.groupName
 			});
 		});
 		data.groups().each(function(item){
@@ -388,11 +401,13 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		});
 		
 		var xml=data2xml('results',results);
+
 		var diagram=canvas.toDataURL('image/png');
 		var dataToSend={
             xml:xml,
             participantNumber:participantNumber,
-            diagram:diagram
+            diagram:diagram,
+			surveyId:data.surveyId
         };
         var dataToSendStr=JSON.stringify(dataToSend);
 
@@ -414,6 +429,60 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
         };
         $.ajax(settings);
 	};
+
+	module.saveScreen=function(){
+		var screenName=currentPage;
+		if(screenName!='Intro' && screenName!=null && screenName!='Review'){
+
+			if(data.reachedReview == true){
+				screenName=screenName+'Revised';
+			}
+
+
+			var diagram=canvas.toDataURL('image/png');
+			var dataToSend={
+				screenName:screenName,
+				participantNumber:participantNumber,
+				surveyId:data.surveyId,
+				diagram:diagram
+			};
+			var dataToSendStr=JSON.stringify(dataToSend);
+			var settings={
+				processData:false,
+				url: 'saveScreen',
+				success: function(data){
+					console.log('success');
+				},
+				error: function(err,textStatus,errorThrown){
+					console.log('error saving data');
+					console.log('error textStatus: '+textStatus);
+					console.log('error errorThrown: '+errorThrown);
+				},
+				dataType:'json',
+				contentType:'application/json',
+				type:'POST',
+				data:dataToSendStr
+			};
+			$.ajax(settings);
+		}
+	};
+
+
+	module.printDate=function() {
+		var temp = new Date();
+		var dateStr =
+			module.padStr(temp.getFullYear()) +
+			module.padStr(1 + temp.getMonth()) +
+			module.padStr(temp.getDate()) +
+			module.padStr(temp.getHours()) +
+			module.padStr(temp.getMinutes()) +
+			module.padStr(temp.getSeconds());
+		return dateStr;
+	}
+
+	module.padStr=function(i) {
+		return (i < 10) ? "0" + i : "" + i;
+	};
 	
 	module.resetData=function(){
 		
@@ -423,6 +492,8 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		data.activeLine=null;
 		data.groups().remove();
 		data.lines().remove();
+		data.reachedReview=false;
+		data.surveyId=module.printDate();
 		
 		module.reposition(true);
 		
@@ -437,7 +508,10 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		module.canChangePriority=false;
 		module.showTray=false;
 		module.canChangeDirection=false;
-		
+
+
+		module.saveScreen();
+
 		if(pageName=='Intro'){
 			$('#participantNumber').attr('value','');
 			$('#sideBarId').html('');
@@ -446,6 +520,8 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			
 			$('.intro').fadeIn();
 			$('#pages').fadeOut();
+			$('#sideBarTitle').text('');
+			$('#sideBarText').html('');
 			currentPage='Intro';
 		}else{
 			if(currentPage=='Intro'){
@@ -459,6 +535,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 					module.goToPage(pageName);
 				});
 			}else{
+
 				if(pageName=='Select'){
 					$('#sideBarTitle').text('Select Symptoms');
 					$('#sideBarText').html('Drag the symptoms you have experienced in the past 24 hours into the main portion of the screen');
@@ -486,7 +563,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 					
 				}else if(pageName=='Cause'){
 					$('#sideBarTitle').text('Cause?');
-					$('#sideBarText').html('Do you think that some of the symptoms cause other symptoms?  <br/><br/>If you think some of the symptoms cause other symptoms "Tap" on a line to indicate which symptom causes the other');
+					$('#sideBarText').html('Do you think that some of the symptoms cause other symptoms?  <br/><br/>If you think some of the symptoms cause other symptoms "Tap" on a line to indicate which symptom causes the other.<br/><br/>To change the direction of the arrow, tap on the line again.');
 					module.setTool('Selector');
 					currentPage=pageName;
 					module.canChangeDirection=true;
@@ -496,7 +573,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 					
 				}else if(pageName=='Groups'){
 					$('#sideBarTitle').text('Groups?');
-					$('#sideBarText').html('Draw a rectangle around symptoms that occur together as a group. <button id="newGroupButton" style="margin-top:5px" class="btn info">Add New Group</button><br/><br/>After you have drawn rectangles around the symptom groups "Double Tap" on each rectangle to answer questions about that group.<br/><br/>"Press and Hold" to delete a group.');
+					$('#sideBarText').html('Draw a rectangle around symptoms that occur together as a group. <button id="newGroupButton" style="margin-top:5px" class="btn info">Add New Group</button><br/><br/><p style="font-size:.85em">After you have drawn rectangles around the symptom groups "Double Tap" on each rectangle to answer questions about that group.<br/><br/>"Press and Hold" to delete a group.<br/><br/>Drag on the sides of the rectangles as needed to change its size.  <br/><br/>Move the symptom squares as needed to fit them in the rectangles.</p>');
 					module.setTool('Selector');
 					currentPage=pageName;
 					module.canDrag=true;
@@ -508,10 +585,11 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 					currentPage=pageName;
 				}else if(pageName=='Review'){
 					$('#sideBarTitle').text('Review');
-					$('#sideBarText').html('Is this an accurate drawing of the symptoms you have experienced?<br/><br/Click "Submit" to submit your answers and exit the program.');
+					$('#sideBarText').html('Is this an accurate drawing of the symptoms you have experienced?<br/><br/><button id="isAccurate" style="margin-top:5px;width:75px" class="btn success">Yes</button><button id="notAccurate" style="margin-top:5px;margin-left:5px;width:75px" class="btn danger">No</button>');
 					module.setTool('Selector');
 					currentPage=pageName;
 					$('#continueButton').text('Submit');
+					data.reachedReview=true;
 				}
 			}
 		}
@@ -643,7 +721,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			$('#backButton').text('Back');
 			$('#backButton').show();
 		}else if(currentPage=="Review"){
-			$('#continueButton').show();
+			$('#continueButton').hide();
 			$('#backButton').text('Back');
 			$('#backButton').show();
 		}
@@ -815,18 +893,35 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		$('#dialogTitle').text('You Are Finished!');
 		$('#lineForm').hide();
 		$('#thankYouForm').show();
+		$('#makeChangesForm').hide();
 		$('#groupForm').hide();
 		$('#symptomForm').hide();
 		$('#cancelDialog').hide();
 		$('#saveDialog').text('Continue');
 		$('#dialog').modal({show:true,backdrop:'static'});
 	};
+
+	// Show Make Changes
+	module.showMakeChangesDialog=function(){
+
+		$('#dialogTitle').text('Make Changes?');
+		$('#lineForm').hide();
+		$('#thankYouForm').hide();
+		$('#makeChangesForm').show();
+		$('#groupForm').hide();
+		$('#symptomForm').hide();
+		$('#cancelDialog').show();
+		$('#cancelDialog').text('No');
+		$('#saveDialog').text('Yes');
+		$('#dialog').modal({show:true,backdrop:'static'});
+	};
 	
-	// Show Symptom Dialog
+	// Show Line Dialog
 	module.showLineDialog=function(){
 		$('#dialogTitle').text('Symptom Relationships?');
 		$('#lineForm').show();
 		$('#thankYouForm').hide();
+		$('#makeChangesForm').hide();
 		$('#groupForm').hide();
 		$('#symptomForm').hide();
 		$('#lineConnected').attr('value',data.lineDetails.connected?data.lineDetails.connected:'');
@@ -836,6 +931,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		$('#lineOrder').attr('value',data.lineDetails.connected?data.lineDetails.order:'');
 		$('#lineDifferent').attr('value',data.lineDetails.different?data.lineDetails.different:'');
 		$('#cancelDialog').show();
+		$('#cancelDialog').text('Cancel');
 		$('#saveDialog').text('Save');
 		$('#dialog').modal({show:true,backdrop:'static'});
 		
@@ -853,6 +949,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		$('#symptomForm').show();
 		$('#groupForm').hide();
 		$('#thankYouForm').hide();
+		$('#makeChangesForm').hide();
 		$('#symptomCause').attr('value',data.activeShape.cause?data.activeShape.cause:'');
 		$('#symptomBetter').attr('value',data.activeShape.better?data.activeShape.better:'');
 		$('#symptomWorse').attr('value',data.activeShape.worse?data.activeShape.worse:'');
@@ -860,6 +957,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		$('#symptomDrWorse').attr('value',data.activeShape.drWorse?data.activeShape.drWorse:'');
 		$('#symptomEffect').attr('value',data.activeShape.effect?data.activeShape.effect:'');
 		$('#cancelDialog').show();
+		$('#cancelDialog').text('Cancel');
 		$('#saveDialog').text('Save');
 		$('#dialog').modal({show:true,backdrop:'static'});
 		
@@ -870,12 +968,15 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	module.showGroupDialog=function(){
 		$('#dialogTitle').text('Group Details');
 		$('#lineForm').hide();
+		$('#makeChangesForm').hide();
+		$('#thankYouForm').hide();
 		$('#groupForm').show();
 		$('#symptomForm').hide();
 		$('#groupCause').attr('value',data.activeGroup.cause?data.activeGroup.cause:'');
 		$('#groupName').attr('value',data.activeGroup.name?data.activeGroup.name:'');
 		$('#groupEffect').attr('value',data.activeGroup.effect?data.activeGroup.effect:'');
 		$('#cancelDialog').show();
+		$('#cancelDialog').text('Cancel');
 		$('#saveDialog').text('Save');
 		$('#dialog').modal({show:true,backdrop:'static'});
 		

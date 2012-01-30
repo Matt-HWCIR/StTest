@@ -24,17 +24,26 @@ app.get('/',function(req,res){
 });
 
 app.post('/saveFile',function(req,res){
-    var d =new Date();
     var pn=req.body.participantNumber;
-    var xmlFile=pn+'_'+utils.printDate(d)+".xml";
-    var pngFile=pn+'_'+utils.printDate(d)+".png";
+	var surveyId=req.body.survevyId;
+    var xmlFile=pn+'/'+surveyId+"/Results.xml";
+    var pngFile=pn+'/'+surveyId+"/FinalDiagram.png";
     amz.putFile(xmlFile,req.body.xml);
     amz.putFile(pngFile,amz.convertToImage(req.body.diagram),function (err){
         res.send({error:err});
     });
-
-
 });
+
+app.post('/saveScreen',function(req,res){
+	var pn=req.body.participantNumber;
+	var surveyId=req.body.survevyId;
+	var screenName = req.body.screenName;
+	var pngFile=pn+'/'+surveyId+"/"+screenName+".png";
+	amz.putFile(pngFile,amz.convertToImage(req.body.diagram),function (err){
+		res.send({error:err});
+	});
+});
+
 
 // Start Server
 console.log('PORT: '+PORT);
