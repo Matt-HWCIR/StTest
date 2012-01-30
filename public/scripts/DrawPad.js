@@ -223,6 +223,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			}else if($('#makeChangesForm').is(':visible')){
 				module.cancelDialog();
 			}else{
+				data.
 				module.cancelDialog();
 				module.goToPage('Intro');
 			}
@@ -230,6 +231,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		});
 		$('#cancelDialog').bind($.app.END_EV,function(event){
 			if($('#makeChangesForm').is(':visible')){
+				data.diagramIsAccurate=false;
 				module.saveResults();
 				module.cancelDialog();
 				module.goToPage('Intro');
@@ -359,6 +361,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	module.saveResults=function(){
 		var results={};
 		results.participantNumber=participantNumber;
+		results.diagramIsAccurate=data.diagramIsAccurate;
 		results.symptom=[];
 		results.group=[];
 		results.line=[];
@@ -491,6 +494,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		data.groups().remove();
 		data.lines().remove();
 		data.reachedReview=false;
+		data.diagramIsAccurate=true;
 		data.surveyId=module.printDate();
 		
 		module.reposition(true);
