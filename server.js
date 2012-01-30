@@ -25,7 +25,7 @@ app.get('/',function(req,res){
 
 app.post('/saveFile',function(req,res){
     var pn=req.body.participantNumber;
-	var surveyId=req.body.survevyId;
+	var surveyId=req.body.surveyId;
     var xmlFile=pn+'/'+surveyId+"/Results.xml";
     var pngFile=pn+'/'+surveyId+"/FinalDiagram.png";
     amz.putFile(xmlFile,req.body.xml);
@@ -36,7 +36,7 @@ app.post('/saveFile',function(req,res){
 
 app.post('/saveScreen',function(req,res){
 	var pn=req.body.participantNumber;
-	var surveyId=req.body.survevyId;
+	var surveyId=req.body.surveyId;
 	var screenName = req.body.screenName;
 	var pngFile=pn+'/'+surveyId+"/"+screenName+".png";
 	amz.putFile(pngFile,amz.convertToImage(req.body.diagram),function (err){
