@@ -23,7 +23,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	var BODY_WIDTH;
 	var currentPage='Intro';
 	var chime=null;
-	
+
 	animate.drawPad=module;
 	module.showTray=true;
 	var participantNumber=null;
@@ -45,7 +45,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		if(chime==null){
             console.log('chime is not initialized');
             try{
-                chime=new Audio("sounds/button-17.mp3");
+                chime=new Audio("sounds/jingle.mp3");
                 chime.load();
                 chime.play();
             }catch(loadChimeError){
@@ -123,6 +123,10 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		return bounds;
 		
 	};
+
+	module.hideKeyboard=function(){
+		$('input').blur();
+	};
 	
 	module.init=function(el){
 		module.setTool('Line');
@@ -146,17 +150,20 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		
 		
 		$(canvas).bind($.app.START_EV,function(event){
+			var currTool=TOOL;
 			var pos=DrawUtils.getMouse(canvas,event);
 			if(pos.x>=0){
-				module.POSITION=pos;	
-				if(TOOL.tap)
-					TOOL.tap(event);
+				module.POSITION=pos;
+
+				if(currTool.tap)
+					currTool.tap(event);
 			}
 		});
 		
 		$(canvas).bind($.app.END_EV,function(event){
-			if(TOOL.touchEnd)
-				TOOL.touchEnd(event);
+			var currTool=TOOL;
+			if(currTool.touchEnd)
+				currTool.touchEnd(event);
 		});
 		
 		$(canvas).bind($.app.MOVE_EV,function(event){
@@ -193,6 +200,20 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			if(TOOL.longTap)
 				TOOL.longTap(event);
 		});
+
+		$('#btnMoveShapes').live($.app.END_EV,function(event){
+			var currText = $('#btnMoveShapes').text();
+			if(currText == 'Mode: Draw Lines'){
+				$('#btnMoveShapes').text('Mode: Drag Symptoms');
+				module.setTool('Selector');
+				module.canDrag=true;
+
+			}else{
+				$('#btnMoveShapes').text('Mode: Draw Lines');
+				module.setTool('Line');
+				module.canDrag=false;
+			}
+		});
 		
 		$('#introButton').bind($.app.END_EV,function(event){
 			module.goToPage('Select');
@@ -217,10 +238,13 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		});
 		$('#saveDialog').bind($.app.END_EV,function(event){
 			if($('#symptomForm').is(':visible')){
-				module.saveSymptom();	
+				module.hideKeyboard();
+				module.saveSymptom();
 			}else if($('#lineForm').is(':visible')){
+				module.hideKeyboard();
 				module.saveLineDetails();
 			}else if($('#groupForm').is(':visible')){
+				module.hideKeyboard();
 				module.saveGroup();
 			}else if($('#makeChangesForm').is(':visible')){
 				module.cancelDialog();
@@ -264,6 +288,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		module.goToPage('Intro');
 		
 		//REMOVE
+		//module.goToPage('Connections')
 		//data.db().limit(2).update({selected:true,detailsEntered:true});
 		//module.invalidate();
 		//END REMOVE
@@ -559,7 +584,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 					
 				}else if(pageName=='Connections'){
 					$('#sideBarTitle').text('Related Symptoms?');
-					$('#sideBarText').html('Draw lines between symptoms that you think are related to each other.<br/><br/>"Double tap" on a line to delete.');
+					$('#sideBarText').html('Draw lines between symptoms that you think are related to each other.<br/><br/>"Double tap" on a line to delete.<br/><br/>Toggle between "drawing lines" and "dragging symptoms" by tapping on the button below.<br/><br/><button id="btnMoveShapes" style="margin-top:5px" class="btn info">Mode: Draw Lines</button>');
 					module.setTool('Line');
 					currentPage=pageName;
 					module.canDrawNewLine=true;
@@ -577,7 +602,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 					
 				}else if(pageName=='Groups'){
 					$('#sideBarTitle').text('Groups?');
-					$('#sideBarText').html('Draw a rectangle around symptoms that occur together as a group. <button id="newGroupButton" style="margin-top:5px" class="btn info">Add New Group</button><br/><br/><p style="font-size:.85em">After you have drawn rectangles around the symptom groups "Double Tap" on each rectangle to answer questions about that group.<br/><br/>"Press and Hold" to delete a group.<br/><br/>Drag on the sides of the rectangles as needed to change its size.  <br/><br/>Move the symptom squares as needed to fit them in the rectangles.</p>');
+					$('#sideBarText').html('Draw a rectangle around symptoms that occur together as a group. <button id="newGroupButton" style="margin-top:5px" class="btn info">Add New Group</button><br/><br/><p style="font-size:.85em">Drag on the sides of each rectangle as needed to change its size.  <br/><br/>Move the symptom squares as needed to fit them in the rectangles.<br/><br/>After you have drawn rectangles around the symptom groups "Double Tap" on each rectangle to answer questions about that group.<br/><br/>"Press and Hold" to delete a group.</p>');
 					module.setTool('Selector');
 					currentPage=pageName;
 					module.canDrag=true;
@@ -943,6 +968,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	
 	// Cancel 
 	module.cancelDialog=function(){
+		module.hideKeyboard();
 		$('#dialog').modal('hide');
 	};
 	

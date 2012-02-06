@@ -128,7 +128,7 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 			if(data.activeShape){
 				var groupId=data.activeShape.groupId;
 				if(groupId){
-					data.db({selected:true,groupId:groupId,}).each(function(item){
+					data.db({selected:true,groupId:groupId}).each(function(item){
 						var topPriority=item==data.activeShape;
 						data.db(item).update({topPriority:topPriority});
 					});

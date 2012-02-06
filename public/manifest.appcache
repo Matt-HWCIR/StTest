@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# Version 30.8
+# Version 50.4
 
 CACHE:
 
@@ -47,5 +47,5 @@ images/navigate_right.png
 images/favicon.ico
 
 NETWORK:
-sounds/button-17.mp3
+sounds/jingle.mp3
 
