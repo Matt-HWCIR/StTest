@@ -150,48 +150,89 @@ define([],function(){
 	module.HexToB=function(h)  {return parseInt((module.cutHex(h)).substring(4,6),16);};
 	module.cutHex=function(h)  {return (h.charAt(0)=="#") ? h.substring(1,7):h;};
 	
-	module.drawArrow=function(start, end,active,showTip,graphics){
-		
-		arrowWidth=18;
-		arrowNarrowWidth=arrowWidth*.75;
-		arrowWideWidth=arrowWidth*1.75;
-		arrowLineWidth=2;
-		arrowTipLength=30;
-		
-		
-		
-		
-		if(!showTip){
-			arrowWidth=arrowWidth-3;
-			arrowNarrowWidth=arrowWidth;
-			arrowWideWidth=arrowWidth;
-			arrowTipLength=1;
-		}
-		
-		
+	module.drawArrow=function(start, end,active,showStartTip,showEndTip,graphics){
+
 		var distance=module.lineDistance(start,end);
-		var arrowStartLength=distance-arrowTipLength;
+		arrowWidth=18;
+		arrowLineWidth=2;
+		startArrowTipLength=30;
+		endArrowTipLength=30;
+
+		var tipTotal = 4;
+		if(showStartTip){
+			tipTotal+=startArrowTipLength;
+		}else{
+			tipTotal+=1;
+		}
+		if(showEndTip){
+			tipTotal+=endArrowTipLength;
+		}else{
+			tipTotal+=1;
+		}
+
+		if(distance < tipTotal){
+			// Line is too short....make lines skinnier
+			arrowWidth=9;
+			startArrowTipLength=15;
+			endArrowTipLength=15;
+		}
+
+		startArrowNarrowWidth=arrowWidth*.75;
+		startArrowWideWidth=arrowWidth*1.75;
+
+
+		endArrowNarrowWidth=arrowWidth*.75;
+		endArrowWideWidth=arrowWidth*1.75;
+
+
+		if(!showStartTip){
+			startArrowNarrowWidth=arrowWidth-3;
+			startArrowWideWidth=arrowWidth-3;
+			startArrowTipLength=1;
+		}
+
+		if(!showEndTip){
+			endArrowNarrowWidth=arrowWidth-3;
+			endArrowWideWidth=arrowWidth-3;
+			endArrowTipLength=1;
+		}
+
+		if(distance < startArrowTipLength+endArrowTipLength){
+			// Line is too short....just draw straight lines
+			startArrowNarrowWidth=arrowWidth-3;
+			startArrowWideWidth=arrowWidth-3;
+			startArrowTipLength=1;
+
+			endArrowNarrowWidth=arrowWidth-3;
+			endArrowWideWidth=arrowWidth-3;
+			endArrowTipLength=1;
+		}
+
+		var endArrowStartLength=distance-endArrowTipLength;
+		var bottomArrowStartLength=startArrowTipLength;
 		if(start!=null && end!=null){
 			if (start.x>end.x) {
-				arrowStartLength=arrowStartLength*-1;
+				endArrowStartLength=endArrowStartLength*-1;
+				bottomArrowStartLength=bottomArrowStartLength*-1
 			}
 		}else{
 			return;
 		}
-		
-		
-		
-		
-		var arrowStart= module.moveOnLine(start,end,arrowStartLength);
-		
-		var bottom1= module.moveOppositeLine(start,end,-1*arrowWidth/2);
-		var bottom2= module.moveOppositeLine(start,end,arrowWidth/2 );
+
+		var topArrowStart= module.moveOnLine(start,end,endArrowStartLength);
+		var bottomArrowStart= module.moveOnLine(start,end,bottomArrowStartLength);
+
+		var bottomInside1= module.moveOppositeLine(bottomArrowStart,start,-1*startArrowNarrowWidth/2);
+		var bottomInside2= module.moveOppositeLine(bottomArrowStart,start,startArrowNarrowWidth/2 );
+
+		var bottomOutside1= module.moveOppositeLine(bottomArrowStart,start,-1*startArrowWideWidth/2);
+		var bottomOutside2= module.moveOppositeLine(bottomArrowStart,start, startArrowWideWidth/2 );
 	
-		var topInside1= module.moveOppositeLine(arrowStart,end,-1*arrowNarrowWidth/2);
-		var topInside2= module.moveOppositeLine(arrowStart,end,arrowNarrowWidth/2 );
+		var topInside1= module.moveOppositeLine(topArrowStart,end,-1*endArrowNarrowWidth/2);
+		var topInside2= module.moveOppositeLine(topArrowStart,end,endArrowNarrowWidth/2 );
 	
-		var topOutside1= module.moveOppositeLine(arrowStart,end,-1*arrowWideWidth/2);
-		var topOutside2= module.moveOppositeLine(arrowStart,end, arrowWideWidth/2 );
+		var topOutside1= module.moveOppositeLine(topArrowStart,end,-1*endArrowWideWidth/2);
+		var topOutside2= module.moveOppositeLine(topArrowStart,end, endArrowWideWidth/2 );
 		
 	
 		if(active==true){
@@ -207,13 +248,19 @@ define([],function(){
 		graphics.beginPath();
 		
 		graphics.moveTo(start.x,start.y);
-		graphics.lineTo(bottom1.x,bottom1.y);
+		graphics.lineTo(bottomOutside1.x,bottomOutside1.y);
+		graphics.lineTo(bottomInside1.x,bottomInside1.y);
+
+
 		graphics.lineTo(topInside1.x,topInside1.y);
 		graphics.lineTo(topOutside1.x,topOutside1.y);
 		graphics.lineTo(end.x,end.y);
 		graphics.lineTo(topOutside2.x,topOutside2.y);
 		graphics.lineTo(topInside2.x,topInside2.y);
-		graphics.lineTo(bottom2.x,bottom2.y);
+
+		graphics.lineTo(bottomInside2.x,bottomInside2.y);
+		graphics.lineTo(bottomOutside2.x,bottomOutside2.y);
+
 		graphics.lineTo(start.x,start.y);
 		graphics.closePath();
 		

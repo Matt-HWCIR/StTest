@@ -1,5 +1,5 @@
-define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool','LineTool','ArrowTool','GroupTool','SymptomTray','SelectedTray','libs/animate','libs/data2xml'],
-			function(data,DrawUtils,LineShape,SymptomShape,GroupShape,SelectorTool,LineTool,ArrowTool,GroupTool,SymptomTray,SelectedTray,animate,data2xml){
+define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool','LineTool','GroupTool','SymptomTray','SelectedTray','libs/animate','libs/data2xml'],
+			function(data,DrawUtils,LineShape,SymptomShape,GroupShape,SelectorTool,LineTool,GroupTool,SymptomTray,SelectedTray,animate,data2xml){
 	
 	var module={};
 	var container=null;
@@ -45,7 +45,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		if(chime==null){
             console.log('chime is not initialized');
             try{
-                chime=new Audio("sounds/jingle.mp3");
+                chime=new Audio("sounds/Ping.wav");
                 chime.load();
                 chime.play();
             }catch(loadChimeError){
@@ -86,9 +86,6 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			case 'Group':
 				data.groupMode=true;
 				TOOL=GroupTool;
-				break;
-			case 'Arrow':
-				TOOL=ArrowTool;
 				break;
 		}
 		TOOL.drawPad=module;
@@ -288,9 +285,9 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		module.goToPage('Intro');
 		
 		//REMOVE
-		//module.goToPage('Connections')
-		//data.db().limit(2).update({selected:true,detailsEntered:true});
-		//module.invalidate();
+//		module.goToPage('Connections')
+//		data.db().limit(2).update({selected:true,detailsEntered:true});
+//		module.invalidate();
 		//END REMOVE
 		
 		
@@ -584,7 +581,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 					
 				}else if(pageName=='Connections'){
 					$('#sideBarTitle').text('Related Symptoms?');
-					$('#sideBarText').html('Draw lines between symptoms that you think are related to each other.<br/><br/>"Double tap" on a line to delete.<br/><br/>Toggle between "drawing lines" and "dragging symptoms" by tapping on the button below.<br/><br/><button id="btnMoveShapes" style="margin-top:5px" class="btn info">Mode: Draw Lines</button>');
+					$('#sideBarText').html('Draw lines between symptoms that you think are related to each other.<br/><br/>"Double tap" on a line to delete.<br/><br/>To rearrange the symptom squares, toggle between "drawing lines" and "dragging symptoms" by tapping on the button below.<br/><br/><button id="btnMoveShapes" style="margin-top:5px" class="btn info">Mode: Draw Lines</button>');
 					module.setTool('Line');
 					currentPage=pageName;
 					module.canDrawNewLine=true;
@@ -592,7 +589,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 					
 				}else if(pageName=='Cause'){
 					$('#sideBarTitle').text('Cause?');
-					$('#sideBarText').html('Do you think that some of the symptoms cause other symptoms?  <br/><br/>If you think some of the symptoms cause other symptoms "Tap" on a line to indicate which symptom causes the other.<br/><br/>To change the direction of the arrow, tap on the line again.');
+					$('#sideBarText').html('Do you think that some of the symptoms cause other symptoms?  <br/><br/>If you think some of the symptoms cause other symptoms "Tap" on a line to indicate which symptom causes the other.<br/><br/>To change the direction of the arrow, tap on the line again.<br/><br/>To show a two-way arrow, tap on the line a third time.');
 					module.setTool('Selector');
 					currentPage=pageName;
 					module.canChangeDirection=true;

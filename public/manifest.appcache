@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# Version 50.4
+# Version 70.6
 
 CACHE:
 
@@ -30,11 +30,9 @@ scripts/SymptomShape.js
 scripts/GroupShape.js
 scripts/SelectorTool.js
 scripts/LineTool.js
-scripts/ArrowTool.js
 scripts/GroupTool.js
 scripts/SymptomTray.js
 scripts/SelectedTray.js
-
 
 
 images/bg.png
@@ -47,5 +45,5 @@ images/navigate_right.png
 images/favicon.ico
 
 NETWORK:
-sounds/jingle.mp3
+sounds/Ping.wav
 

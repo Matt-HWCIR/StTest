@@ -38,20 +38,23 @@ define(['data','libs/MathUtils'],function(data,MathUtils){
 				isActive=data.activeLine==line;
 				
 			}
-			var showTip=false;
+			var showStartTip=false;
+			var showEndTip=false;
 			var startPt=pt1;
 			var endPt=pt2;
+
 			if(line.direction){
-				showTip=true;
 				if(line.direction=='EndToStart'){
-					startPt=pt2;
-					endPt=pt1;
+					showEndTip=true;
+				}else if(line.direction=='StartToEnd'){
+					showStartTip=true;
+				}else if(line.direction=='Both'){
+					showEndTip=true;
+					showStartTip=true;
 				}
 			}
-			MathUtils.drawArrow(startPt,endPt,isActive,showTip,ctx);
+			MathUtils.drawArrow(startPt,endPt,isActive,showStartTip,showEndTip,ctx);
 		}
-		
-		
 	};
 	
 	return module;

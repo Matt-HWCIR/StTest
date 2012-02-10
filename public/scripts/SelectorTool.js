@@ -15,6 +15,8 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 			if(data.activeLine.direction=='StartToEnd'){
 				data.lines(data.activeLine).update({direction:'EndToStart'});
 			}else if(data.activeLine.direction=='EndToStart'){
+				data.lines(data.activeLine).update({direction:'Both'});
+			}else if(data.activeLine.direction=='Both'){
 				data.lines(data.activeLine).update({direction:null});
 			}else{
 				data.lines(data.activeLine).update({direction:'StartToEnd'});
