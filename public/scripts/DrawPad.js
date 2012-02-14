@@ -301,7 +301,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		var groupId=maxId+1;
 		var maxzindex=data.groups().max('zindex')+1;
 		data.groups.insert({id:groupId,type:'group',zindex:maxzindex,x:100,y:100,w:200,h:200,detailsEntered:false,color:colors[colorIndex]});
-		data.activeGroup=data.groups({id:groupId,}).first();
+		data.activeGroup=data.groups({id:groupId}).first();
 		module.invalidate();
 	};
 	module.nextPage=function(){
@@ -387,40 +387,42 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		results.symptom=[];
 		results.group=[];
 		results.line=[];
-		
-		
+		results.symptomRelationships=
+		{
+			all:data.lineDetails.all,
+			notAll:data.lineDetails.notAll,
+			usually:data.lineDetails.usually,
+			order:data.lineDetails.order,
+			different:data.lineDetails.different,
+			connected:data.lineDetails.connected
+
+		};
+
 		data.db({selected:true}).each(function(item){
 			results.symptom.push({
+				name:item.name,
 				cause:item.cause,
 				better:item.better,
 				worse:item.worse,
 				drBetter:item.drBetter,
 				drWorse:item.drWorse,
 				effect:item.effect,
-				name:item.name,
 				topPriority:item.topPriority,
 				groupName:item.groupName
 			});
 		});
 		data.groups().each(function(item){
 			results.group.push({
+				name:item.name,
 				cause:item.cause,
-				effect:item.effect,
-				name:item.name
+				effect:item.effect
 			});
 		});
 		data.lines().each(function(item){
 			results.line.push({
-				connected:item.connected,
-				all:item.all,
-				notAll:item.notAll,
-				usually:item.usually,
-				order:item.order,
-				different:item.different,
 				fromSymptom:item.start,
 				toSymptom:item.end
 			});
-			
 		});
 		
 		var xml=data2xml('results',results);
@@ -515,8 +517,9 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		data.activeLine=null;
 		data.groups().remove();
 		data.lines().remove();
+		data.lineDetails={};
 		data.reachedReview=false;
-		data.diagramIsAccurate=true;
+		data.diagramIsAccurate=false;
 		data.surveyId=module.printDate();
 		
 		module.reposition(true);
@@ -952,7 +955,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		$('#lineAll').attr('value',data.lineDetails.all?data.lineDetails.all:'');
 		$('#lineNotAll').attr('value',data.lineDetails.notAll?data.lineDetails.notAll:'');
 		$('#lineUsually').attr('value',data.lineDetails.usually?data.lineDetails.usually:'');
-		$('#lineOrder').attr('value',data.lineDetails.connected?data.lineDetails.order:'');
+		$('#lineOrder').attr('value',data.lineDetails.order?data.lineDetails.order:'');
 		$('#lineDifferent').attr('value',data.lineDetails.different?data.lineDetails.different:'');
 		$('#cancelDialog').show();
 		$('#cancelDialog').text('Cancel');
