@@ -45,13 +45,15 @@ Results.xml  - Textual results
 			<effect/>   // What effect does this symptom group have on your daily activities?
 			<name/>   // What name would you give to this symptom group?
 		</group>
-		<line>
+		<symptomRelationships>
 			<connected/>  // How do you think these symptoms are connected?
 			<all/>    // Do you experience all of them at thesame time?
 			<notAll/> // If you don't experience all the symptoms at the same time, do you usually experience them in any order (does one symptom happen first, then another symptom)?
 			<usually/>  // If you usually experience symptoms  in an order, please list the symptoms in the order they occur
 			<order/>   // Do you always experience them in that order?
 			<different/> // If you sometimes don't experience them in that order, what do you think makes the order different?
+		</symptomRelationships>
+		<line>
 			<fromSymptom/>  // Symptom the line originate from
 			<toSymptom/>  // Symptom the line pointed to
 		</line>
