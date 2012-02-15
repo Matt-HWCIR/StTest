@@ -18,6 +18,7 @@ define([],function(){
 		$.app=module;
 		
 		module.hasTouch=typeof 'Touch' === 'object';
+		module.hasTouch='ontouchstart' in window;
 		
 		
 		$.log=function(item){
