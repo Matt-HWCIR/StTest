@@ -33,6 +33,7 @@ define([],function(){
 	                  'Skin changes'];
 	
 	var symptoms=[];
+	symptomNames.sort();
 	$(symptomNames).each(function(index,item){
 		symptoms.push({
 			name:item,
@@ -50,10 +51,9 @@ define([],function(){
 			connectOrigin:false,
 			connectDestination:false
 		});
-		index++;
 	});
 	
-	data.db=TAFFY(symptoms);
+	data.db=symptoms;
 	
 	// States
 	data.activeShape=null;
@@ -66,18 +66,14 @@ define([],function(){
 	data.activeLine=null;
 	
 	// Connections
-	data.lines=TAFFY();
+	data.lines=[];
 	data.lineDetails={};
 	
 	// Groups
-	data.groups=TAFFY();
+	data.groups=[];
 	data.groupMode=false;
 	data.activeGroup=null;
 	
-	
-	// Buttons
-	data.buttons=TAFFY();
-	data.buttons.insert({id:'back'},{id:'next'});
 	
 	return data;
 });

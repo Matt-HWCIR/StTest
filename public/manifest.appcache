@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# Version 71.7
+# Version 95.0
 
 CACHE:
 
@@ -13,7 +13,7 @@ scripts/libs/jquery-1.6.4.min.js
 scripts/libs/less-1.1.5.min.js
 scripts/libs/jquery-ui-1.8.16.js
 scripts/libs/touchable.js
-scripts/libs/taffy-min.js
+scripts/libs/underscore.js
 scripts/libs/bootstrap-modal.js
 scripts/libs/shifty.js
 scripts/libs/require.js

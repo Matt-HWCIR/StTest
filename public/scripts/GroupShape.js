@@ -16,6 +16,19 @@ define(['data','libs/MathUtils'],function(data,MathUtils){
 			x=group.dragX;
 			y=group.dragY;
 		}
+		if(_.isUndefined(x)){
+			x=group.dragX;
+		}
+		if(_.isUndefined(y)){
+			y=group.dragY;
+		}
+
+		if(_.isUndefined(x)){
+			x=100;
+		}
+		if(_.isUndefined(y)){
+			y=100;
+		}
 		
 		var r=MathUtils.HexToR(group.color);
 		var g=MathUtils.HexToG(group.color);

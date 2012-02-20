@@ -3,8 +3,8 @@ define(['data','libs/MathUtils'],function(data,MathUtils){
 	
 	module.draw=function(line,ctx,gctx){
 		
-		var lineStartShape=data.db({selected:true,name:line.start}).first();
-		var lineEndShape=data.db({selected:true,name:line.end}).first();
+		var lineStartShape=_.find(data.db,function(t){return t.selected==true && t.name==line.start});
+		var lineEndShape=_.find(data.db,function(t){return t.selected==true && t.name==line.end});
 		
 		if(lineStartShape && lineEndShape){
 			var startX=lineStartShape.x;
