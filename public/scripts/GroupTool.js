@@ -33,20 +33,18 @@ define(['data'],function(data){
 		
 		if(!data.activeGroup){
 			module.newMode=false;
-			var maxId=data.groups().max('id');
+			var maxId=_.max(data.groups, function(t){ return t.id});
 			var groupId=maxId+1;
-			data.groups.insert({id:groupId,name:'Group',type:'group',});
-			data.activeGroup=data.groups({id:groupId,}).first();
+			newGroup ={id:groupId,name:'Group',type:'group'};
+			data.groups.push(newGroup);
+			data.activeGroup=newGroup
 		}
 		
 		if(data.activeGroup){
-			data.groups(data.activeGroup).update({
-				x:Math.min(startX,endX),
-				y:Math.min(startY,endY),
-				w:Math.max(endX,startX)-Math.min(endX,startX),
-				h:Math.max(endY,startY)-Math.min(endY,startY),
-			},false);
-			data.activeGroup=data.groups(data.activeGroup).first();
+			data.activeGroup.x=Math.min(startX,endX);
+			data.activeGroup.y=Math.min(startY,endY);
+			data.activeGroup.w=Math.max(endX,startX)-Math.min(endX,startX);
+			data.activeGroup.h=Math.max(endY,startY)-Math.min(endY,startY);
 		}
 		module.drawPad.invalidate();
 	};

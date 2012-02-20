@@ -43,7 +43,6 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 
 	module.playChime=function(){
 		if(chime==null){
-            console.log('chime is not initialized');
             try{
                 chime=new Audio("sounds/Ping.wav");
                 chime.load();
@@ -222,6 +221,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			module.nextPage();
 		});
 		$('#isAccurate').live($.app.END_EV,function(event){
+			data.diagramIsAccurate=true;
 			module.nextPage();
 		});
 		$('#notAccurate').live($.app.END_EV,function(event){
@@ -284,39 +284,59 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		// Go To First Page
 		module.goToPage('Intro');
 		
-		//REMOVE
-//		module.goToPage('Connections')
-//		data.db().limit(2).update({selected:true,detailsEntered:true});
+//		REMOVE
+//		module.goToPage('Groups')
+//		var numTestItems =0;
+//		_.each(data.db, function(item){
+//			if(numTestItems<4){
+//				item.selected=true;
+//				item.detailsEntered=true;
+//				numTestItems++;
+//			}
+//
+//		});
 //		module.invalidate();
-		//END REMOVE
+//		END REMOVE
 		
 		
 	};
 	module.createGroup=function(){
 		var colors=['#005695','#174496','#393817','#760a59','#713d92','#4c5025'].reverse();
-		var maxId=data.groups().max('id');
+		var maxOb=_.max(data.groups,function(t){return t.id});
+		var maxId=0;
+		if(maxOb){
+			maxId=maxOb.id;
+		}
+
 		var colorIndex=maxId;
 		if(!colorIndex || colorIndex>colors.length-1){
 			colorIndex=0;
 		}
 		
 		var groupId=maxId+1;
-		var maxzindex=data.groups().max('zindex')+1;
-		data.groups.insert({id:groupId,type:'group',zindex:maxzindex,x:100,y:100,w:200,h:200,detailsEntered:false,color:colors[colorIndex]});
-		data.activeGroup=data.groups({id:groupId}).first();
+		maxzindex=1;
+		var maxOb=_.max(data.groups,function(t){return t.zindex})
+		if(maxOb){
+			maxzindex=maxOb.zindex;
+		}
+		var offset = data.groups.length;
+		var newgroup={id:groupId,type:'group',zindex:maxzindex,x:(100+offset*25),y:(100+offset*30),w:150,h:150,detailsEntered:false,color:colors[colorIndex]};
+		data.groups.push(newgroup);
+		data.activeGroup=newgroup;
 		module.invalidate();
 	};
 	module.nextPage=function(){
 		if(currentPage=='Select'){
 			module.goToPage('SymptomDetail');
 		}else if(currentPage=='SymptomDetail'){
-			if(data.db({selected:true}).count()>1){
+			selecteditems = _.filter(data.db,function(item){return item.selected===true});
+			if(selecteditems.length>1){
 				module.goToPage('Connections');
 			}else{
 				module.goToPage('Review');
 			}
 		}else if(currentPage=='Connections'){
-			if(data.lines().count()>0){
+			if(data.lines.length>0){
 				module.showLineDialog();
 			}else{
 				module.goToPage('Groups');
@@ -325,9 +345,9 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			module.goToPage('Groups');
 		}else if(currentPage=='Groups'){
 			var needsPriority=false;
-			data.groups().each(function(item){
-				var numItems=data.db({selected:true,groupId:item.id}).count();
-				if(numItems>1){
+			_.each(data.groups,function(item){
+				var selecteditems = _.filter(data.db,function(t){return t.selected===true && t.groupId==item.id});
+				if(selecteditems.length>1){
 					needsPriority=true;
 				}
 			});
@@ -352,7 +372,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		}else if(currentPage=='Cause'){
 			module.goToPage('Connections');
 		}else if(currentPage=='Groups'){
-			if(data.lines().count()==0){
+			if(data.lines.length==0){
 				module.goToPage('Connections');
 			}else{
 				module.goToPage('Cause');
@@ -362,10 +382,11 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		}else if(currentPage=='Priority'){
 			module.goToPage('Groups');
 		}else if(currentPage=='Review'){
-			if(data.db({selected:true}).count()>1){
+			var selecteditems = _.filter(data.db,function(item){return item.selected===true});
+			if(selecteditems.length>1){
 				var needsPriority=false;
-				data.groups().each(function(item){
-					var numItems=data.db({selected:true,groupId:item.id}).count();
+				_.filter(data.groups,function(item){
+					var numItems = _.filter(data.db,function(t){return t.selected===true && t.groupId==item.id}).length;
 					if(numItems>1){
 						needsPriority=true;
 					}
@@ -400,27 +421,29 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 
 		};
 
-		data.db({selected:true}).each(function(item){
-			results.symptom.push({
-				name:item.name,
-				cause:item.cause,
-				better:item.better,
-				worse:item.worse,
-				drBetter:item.drBetter,
-				drWorse:item.drWorse,
-				effect:item.effect,
-				topPriority:item.topPriority,
-				groupName:item.groupName
-			});
+		_.each(data.db,function(item){
+			if(item.selected){
+				results.symptom.push({
+					name:item.name,
+					cause:item.cause,
+					better:item.better,
+					worse:item.worse,
+					drBetter:item.drBetter,
+					drWorse:item.drWorse,
+					effect:item.effect,
+					topPriority:item.topPriority,
+					groupName:item.groupName
+				});
+			}
 		});
-		data.groups().each(function(item){
+		_.each(data.groups,function(item){
 			results.group.push({
 				name:item.name,
 				cause:item.cause,
 				effect:item.effect
 			});
 		});
-		data.lines().each(function(item){
+		_.each(data.lines,function(item){
 			results.line.push({
 				fromSymptom:item.start,
 				toSymptom:item.end
@@ -512,13 +535,29 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	};
 	
 	module.resetData=function(){
-		
-		data.db().update({selected:false,dragging:false,topPriority:false,detailsEntered:false,cause:'',better:'',worse:'',drBetter:'',drWorse:'',effect:''});
+
+		ordereditems  = _.sortBy(data.db,function(t){return t.name});
+
+		index=0;
+		_.each(data.db,function(item){
+			item.selected=false;
+			item.dragging=false;
+			item.topPriority=false;
+			item.detailsEntered=false;
+			item.cause='';
+			item.better='';
+			item.drBetter='';
+			item.drWorse='';
+			item.effect='';
+			item.zindex=0;
+			item.index = index;
+			index++;
+		});
 		data.activeShape=null;
 		data.activeGroup=null;
 		data.activeLine=null;
-		data.groups().remove();
-		data.lines().remove();
+		data.groups=[];
+		data.lines=[];
 		data.lineDetails={};
 		data.reachedReview=false;
 		data.diagramIsAccurate=false;
@@ -627,9 +666,11 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	
 	
 	module.updateGroups=function(){
-		data.db({selected:true}).order("zindex desc").each(function(item){
+		selecteditems = _.filter(data.db,function(item){return item.selected===true});
+		selecteditems = _.sortBy(selecteditems,function(item){return item.zindex}).reverse();
+		_.each(selecteditems,function(item){
 			var bounds={x:item.x+item.w/2,y:item.y+item.h/2,w:1,h:1};
-			var group=module.hitTest(bounds,data.groups());
+			var group=module.hitTest(bounds,data.groups);
 			var groupId=null;
 			var groupColor=null;
 			var groupName=null;
@@ -638,7 +679,9 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 				groupId=group.id;
 				groupName=group.name;
 			}
-			data.db(item).update({groupId:groupId,groupColor:groupColor,groupName:groupName});
+			item.groupId=groupId;
+			item.groupColor=groupColor;
+			item.groupName=groupName;
 		});
 	};
 	
@@ -661,7 +704,8 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			SelectedTray.draw(ctx);	
 			
 			// Draw Groups
-			data.groups().order("zindex").each(function(item){
+			orderedgroups = _.sortBy(data.groups,function(t){return t.zindex});
+			_.each(orderedgroups,function(item){
 				GroupShape.draw(item,ctx);
 			});
 		
@@ -676,12 +720,13 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			}
 			
 			// Draw Lines
-			data.lines().each(function(item){
+			_.each(data.lines,function(item){
 				LineShape.draw(item,ctx,gctx);
 			});
 			
 			// Draw Selected Symptoms
-			data.db().order("zindex").each(function(item){
+			selecteditems=_.sortBy(data.db,function(item){ return item.zindex});
+			_.each(selecteditems,function(item){
 				if(item.selected){
 					SymptomShape.draw(item,ctx,{x:SelectedTray.X,y:SelectedTray.y,w:SelectedTray.WIDTH,h:SelectedTray.h});	
 				}else if(module.showTray){
@@ -701,8 +746,10 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	}
 	
 	module.updateButtons=function(){
+		selecteditems = _.filter(data.db,function(item){return item.selected===true});
+		detailsEnteredItems=_.filter(data.db,function(item){return item.selected===true && item.detailsEntered==true});
 		if(currentPage=="Select"){
-			if(data.db({selected:true}).count()>0){
+			if(selecteditems.length>0){
 				$('#continueButton').show();
 			}else{
 				$('#continueButton').hide();
@@ -710,7 +757,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			$('#backButton').text('Start Over');
 			$('#backButton').show();
 		}else if(currentPage=="SymptomDetail"){
-			if(data.db({selected:true}).count()==data.db({selected:true,detailsEntered:true}).count()){
+			if(selecteditems.length==detailsEnteredItems.length){
 				$('#continueButton').show();
 			}else{
 				$('#continueButton').hide();
@@ -726,7 +773,8 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			$('#backButton').text('Back');
 			$('#backButton').show();
 		}else if(currentPage=="Groups"){
-			if(data.groups().count()==data.groups({detailsEntered:true}).count()){
+			detailsEnteredGroups= _.filter(data.groups,function(t){return t.detailsEntered});
+			if(data.groups.length==detailsEnteredGroups.length){
 				$('#continueButton').show();
 			}else{
 				$('#continueButton').hide();
@@ -734,11 +782,12 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			$('#backButton').text('Back');
 			$('#backButton').show();
 		}else if(currentPage=="Priority"){
-			var priorityEntered=true;
-			data.groups().each(function(item){
-				var numItems=data.db({selected:true,groupId:item.id}).count();
-				var hasPriority=data.db({selected:true,groupId:item.id,topPriority:true}).count()>0;
-				if(!hasPriority && numItems>1){
+			var priorityEntered = true;
+
+			_.each(data.groups,function(item){
+				var selectedItems=_.filter(data.db,function(t){return t.selected===true && t.groupId==item.id});
+				var hasPriority=_.filter(selectedItems,function(t){return t.topPriority=true}).length>0;
+				if(!hasPriority && selectedItems.length>1){
 					priorityEntered=false;
 				}
 			});
@@ -804,7 +853,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	module.reposition=function(repositionSelectedItems,shouldAnimate){
 		// Position Unselected Symptoms
 		
-		var unselectedCount=data.db({selected:false}).count();
+		var unselectedCount=_.filter(data.db,function(item){return item.selected==false}).length;
 		var y=HEIGHT-SYMPTOM_TRAY_HEIGHT+SYMTPOM_TRAY_Y_BUFFER;
 		var h=SYMPTOM_TRAY_HEIGHT-SYMTPOM_TRAY_Y_BUFFER*2;
 		var w=SYMPTOM_WIDTH;
@@ -831,7 +880,9 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		
 		var itemIndex=1;
 		var animations=[];
-		data.db({selected:false}).order("index logical,name").each(function(item){
+		unselectedItems = _.filter(data.db,function(t){return t.selected==false});
+		unselectedItems=_.sortBy(unselectedItems,function(t){return t.index});
+		_.each(unselectedItems,function(item){
 			var newX=x;
 			var newY=y;
 			if(itemIndex<firstItem){
@@ -850,26 +901,24 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			if(itemIndex<firstVisible || itemIndex>lastVisible){
 				isVisible=false;
 			}
-			
-			var newProps={h:h,w:w,isVisible:isVisible};
+
+			item.isVisible=isVisible;
 			if(shouldAnimate!=true){
-				newProps.x=newX;
-				newProps.y=newY;
+				item.x=newX;
+				item.y=newY;
 			}
-			data.db(item).update(newProps,false);
 			item.h=h;
 			item.w=w;
 			if(shouldAnimate==true){
 				animations.push({item:item,props:{x:newX,y:newY},duration:300});
 			}
 			itemIndex++;
-			
 		});
 		
 		$.each(animations,function(index,an){
 			animate.animateTo(an.item,an.props,an.duration);
 		});
-		
+
 		
 		
 		// Determine Margins
@@ -878,10 +927,12 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		var startX=sideMargins/2;
 		
 		// Resize Selected Symptoms
-		data.db({selected:true}).each(function(item){
+		selecteditems=_.filter(data.db,function(t){return t.selected===true});
+		_.each(selecteditems,function(item){
 			w=SYMPTOM_WIDTH;
 			h=SYMPTOM_HEIGHT;
-			data.db(item).update({h:h,w:w},false);
+			item.h=h;
+			item.w=w;
 		});
 		
 		// Position Selected Symptoms
@@ -890,8 +941,13 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			y=SYMPTOM_BUFFER;
 			w=SYMPTOM_WIDTH;
 			h=SYMPTOM_HEIGHT;
-			data.db({selected:true}).order("index logical,name").each(function(item){
-				data.db(item).update({x:x,y:y,h:h,w:w},false);
+			selecteditems=_.filter(data.db,function(t){return t.selected===true});
+			selecteditems=_.sortBy(selecteditems,function(t){return t.index});
+			_.each(selecteditems,function(item){
+				item.x=x;
+				item.y=y;
+				item.h=h;
+				item.w=w;
 				x+=SYMPTOM_BUFFER+w;
 				if(x+SYMPTOM_WIDTH>WIDTH){
 					// move to next row
@@ -1026,16 +1082,13 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 
 	// Save Group
 	module.saveGroup=function(){
-		var values ={
-				cause:$('#groupCause').attr('value'),
-				name:$('#groupName').attr('value'),
-				effect:$('#groupEffect').attr('value'),
-				detailsEntered:true
-			};
-		data.groups(data.activeGroup).update(values);
-		data.activeGroup=data.groups(data.activeGroup).first();
+		data.activeGroup.cause=$('#groupCause').attr('value');
+		data.activeGroup.name=$('#groupName').attr('value');
+		data.activeGroup.effect=$('#groupEffect').attr('value');
+		data.activeGroup.detailsEntered=true;
+
 		$('#dialog').modal('hide');
-		if(module.hasEmptyValue(values,['cause','name','effect'])){
+		if(module.hasEmptyValue(data.activeGroup,['cause','name','effect'])){
 			module.playChime();	
 		}
 		module.invalidate();
@@ -1043,19 +1096,15 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 	
 	// Save Symptom
 	module.saveSymptom=function(){
-		var values={
-				cause:$('#symptomCause').attr('value'),
-				better:$('#symptomBetter').attr('value'),
-				worse:$('#symptomWorse').attr('value'),
-				drBetter:$('#symptomDrBetter').attr('value'),
-				drWorse:$('#symptomDrWorse').attr('value'),
-				effect:$('#symptomEffect').attr('value'),
-				detailsEntered:true
-			};
-		data.db(data.activeShape).update(values);
-		data.activeShape=data.db(data.activeShape).first();
+		data.activeShape.cause=$('#symptomCause').attr('value');
+		data.activeShape.better=$('#symptomBetter').attr('value');
+		data.activeShape.worse=$('#symptomWorse').attr('value');
+		data.activeShape.drBetter=$('#symptomDrBetter').attr('value');
+		data.activeShape.drWorse=$('#symptomDrWorse').attr('value');
+		data.activeShape.effect=$('#symptomEffect').attr('value');
+		data.activeShape.detailsEntered=true;
 		$('#dialog').modal('hide');
-		if(module.hasEmptyValue(values,['cause','better','worse','drBetter','drWorse','effect'])){
+		if(module.hasEmptyValue(data.activeShape,['cause','better','worse','drBetter','drWorse','effect'])){
 			module.playChime();
 		}
 		module.invalidate();

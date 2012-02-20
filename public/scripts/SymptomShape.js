@@ -74,6 +74,7 @@ define(['data','libs/animate'],function(data,animate){
 			ctx.shadowOffsetY=1;
 			ctx.shadowBlur=1;
 			ctx.shadowColor='black';*/
+
 			
 			var words=symptom.name.split(' ');
 			var textY=y+h/2;

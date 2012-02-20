@@ -79,7 +79,7 @@ define(['SymptomShape','LineShape','GroupShape'],function(SymptomShape,LineShape
 	module.hitTest=function(ctx,pos,shapes,maxWidth,maxHeight){
 		var hitShape=null;
 		
-		shapes.each(function(shape){
+		_.each(shapes,function(shape){
 			
 			if(!hitShape){
 				module.clear(ctx,maxWidth,maxHeight);

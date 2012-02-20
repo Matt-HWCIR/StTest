@@ -7,26 +7,25 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 	
 	
 	module.changeDirection=function(){
-		var hitLine=module.drawPad.hitTest(module.drawPad.POSITION,data.lines());
+		var hitLine=module.drawPad.hitTest(module.drawPad.POSITION,data.lines);
 		if(hitLine){
 			data.activeLine=hitLine;
 		}
 		if(data.activeLine  && module.drawPad.canChangeDirection==true){
 			if(data.activeLine.direction=='StartToEnd'){
-				data.lines(data.activeLine).update({direction:'EndToStart'});
+				data.activeLine.direction='EndToStart';
 			}else if(data.activeLine.direction=='EndToStart'){
-				data.lines(data.activeLine).update({direction:'Both'});
+				data.activeLine.direction='Both';
 			}else if(data.activeLine.direction=='Both'){
-				data.lines(data.activeLine).update({direction:null});
+				data.activeLine.direction=null;
 			}else{
-				data.lines(data.activeLine).update({direction:'StartToEnd'});
+				data.activeLine.direction='StartToEnd';
 			}
 			module.drawPad.invalidate();
 		}
 	};
 	module.touchEnd=function(event){
 		var x,y;
-		$.log('touchEnd');
 		if(data.activeShape){
 			x=dragging?data.activeShape.dragX:data.activeShape.x;
 			y=dragging?data.activeShape.dragY:data.activeShape.y;
@@ -41,12 +40,15 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 					selected=!(module.drawPad.isInTray(midX,midY));
 					
 					if(!selected){
-						data.lines([{start:data.activeShape.name},{end:data.activeShape.name}]).remove();
-					}	
+						data.lines = _.filter(data.lines,function(t){
+							return t.start!=data.activeShape.name && t.end!=data.activeShape.name;
+						}) ;
+					}
 					//  Find where we landed
+					otheritems = _.filter(data.db,function(t){return t.name != data.activeShape.name});
 					var hitShape=module.drawPad.hitTest(
 							{x:x,y:y,w:data.activeShape.w,h:data.activeShape.h}
-							,data.db({'name':{'!is':data.activeShape.name}}));
+							,otheritems);
 					
 					if(hitShape){
 						if(index>hitShape.index){
@@ -54,35 +56,27 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 						}else{
 							index=hitShape.index+.001;
 						}
+
 					}
 				}
 				
 			}
 			
-			data.db(data.activeShape).update({
-				dragging:false,
-				selected:selected,
-				x:x,
-				y:y,
-				index:index
-			});
-			
-			data.activeShape=data.db(data.activeShape).first();
-		
-			
+			data.activeShape.dragging=false;
+			data.activeShape.selected=selected;
+			data.activeShape.x=x;
+			data.activeShape.y=y;
+			data.activeShape.index=index;
 			module.drawPad.reposition(false,true);
 		}else if(data.activeGroup){
 			x=dragging?data.activeGroup.dragX:data.activeGroup.x;
 			y=dragging?data.activeGroup.dragY:data.activeGroup.y;
 			var bounds=module.drawPad.ensureGroupIsInBounds(x,y,data.activeGroup);
-			data.groups(data.activeGroup).update({
-				dragging:false,
-				x:bounds.x,
-				y:bounds.y,
-				w:bounds.w,
-				h:bounds.h
-			});
-			data.activeGroup=data.groups(data.activeGroup).first();
+			data.activeGroup.dragging=false;
+			data.activeGroup.x=bounds.x;
+			data.activeGroup.y=bounds.y;
+			data.activeGroup.w=bounds.w;
+			data.activeGroup.h=bounds.h;
 			
 		}
 		dragging=false;
@@ -106,7 +100,7 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 			var doDelete=confirm('Are you sure you want to delete the group "'
 					+groupName+'"?');
 			if(doDelete){
-				data.groups(data.activeGroup).remove();
+				data.groups = _.filter(data.groups, function(t){ return t !=data.activeGroup});
 				data.activeGroup=null;
 				module.drawPad.invalidate();
 			}
@@ -114,15 +108,14 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 	};
 
 	module.tap=function(event){
-		$.log('tap');
-		
 		if(dragging)return; // only allow one selection
 		var hitItem=null;
 		data.activeGroup=null;
 		
-		var shapes=data.db();
+		var shapes=data.db;
 		if(module.drawPad.showTray==false){
-			shapes=data.db({selected:true});
+			shapes=_.filter(data.db,function(t){ return t.selected==true});
+			shapes =_.sortBy(shapes,function(t){return t.zindex}).reverse();
 		}
 		data.activeShape=module.drawPad.hitTest(module.drawPad.POSITION,shapes);
 		
@@ -130,9 +123,10 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 			if(data.activeShape){
 				var groupId=data.activeShape.groupId;
 				if(groupId){
-					data.db({selected:true,groupId:groupId}).each(function(item){
+					selecteditems=_.each(data.db,function(t){ return t.selected==true && t.groupId==groupId});
+					_.each(data.db,function(item){
 						var topPriority=item==data.activeShape;
-						data.db(item).update({topPriority:topPriority});
+						item.topPriority=topPriority;
 					});
 				}
 				module.drawPad.invalidate();
@@ -144,14 +138,18 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 		
 		if(data.activeShape){
 			hitItem=data.activeShape;
-			var maxzindex=data.groups().max('zindex')+1;;
-			
-			data.db(data.activeShape).update({
-				zindex:maxzindex,
-				offsetX:module.drawPad.POSITION.x-data.activeShape.x,
-				offsetY:module.drawPad.POSITION.y-data.activeShape.y,
-			});	
-			data.activeShape=data.db(data.activeShape).first();
+			var maxzindex=1;
+
+			maxOb=_.max(data.db,function(t){return t.zindex});
+			if(maxOb){
+				maxzindex=maxOb.zindex+1;
+			}
+
+			console.log('shape: '+data.activeShape.name+' - index='+maxzindex);
+			data.activeShape.zindex=maxzindex;
+			data.activeShape.offsetX=module.drawPad.POSITION.x-data.activeShape.x;
+			data.activeShape.offsetY=module.drawPad.POSITION.y-data.activeShape.y;
+
 			if(module.drawPad.canEnterSymptomDetails==true){
 				module.drawPad.showSymptomDialog();	
 			}
@@ -172,8 +170,9 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 		
 		// see if we are on a group
 		if(!hitItem){
-				
-			data.activeGroup=module.drawPad.hitTest(module.drawPad.POSITION,data.groups().order("zindex desc"));
+
+			orderedgroups = _.sortBy(data.groups,function(t){return t.zindex}).reverse();
+			data.activeGroup=module.drawPad.hitTest(module.drawPad.POSITION,orderedgroups);
 			
 			if(data.activeGroup){
 				hitItem=data.activeGroup;
@@ -190,21 +189,22 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 				}else if(offsetY>data.activeGroup.h-edgeBuffer){
 					anchor='bottom';
 				}
-				
-				var maxzindex=data.groups().max('zindex')+1;;
-				data.groups(data.activeGroup).update({
-					zindex:maxzindex,
-					offsetX:module.drawPad.POSITION.x-data.activeGroup.x,
-					offsetY:module.drawPad.POSITION.y-data.activeGroup.y,
-					startR:data.activeGroup.x+data.activeGroup.w,
-					startL:data.activeGroup.x,
-					startB:data.activeGroup.y+data.activeGroup.h,
-					startT:data.activeGroup.y,
-					startW:data.activeGroup.w,
-					startH:data.activeGroup.h,
-					anchor:anchor
-				});
-				data.activeGroup=data.groups(data.activeGroup).first();
+
+				var maxzindex=1;
+				var maxOb=_.max(data.groups,function(t){return t.zindex});
+				if(maxOb){
+					maxzindex=maxOb.zindex+1;
+				}
+				data.activeGroup.zindex=maxzindex;
+				data.activeGroup.offsetX=module.drawPad.POSITION.x-data.activeGroup.x;
+				data.activeGroup.offsetY=module.drawPad.POSITION.y-data.activeGroup.y;
+				data.activeGroup.startR=data.activeGroup.x+data.activeGroup.w;
+				data.activeGroup.startL=data.activeGroup.x;
+				data.activeGroup.startB=data.activeGroup.y+data.activeGroup.h;
+				data.activeGroup.startT=data.activeGroup.y;
+				data.activeGroup.startW=data.activeGroup.w;
+				data.activeGroup.startH=data.activeGroup.h;
+				data.activeGroup.anchor=anchor;
 			}
 		}
 		
@@ -226,18 +226,16 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 		if(module.drawPad.canDrag==false) return;
 		
 		if(data.activeShape){
-			data.db(data.activeShape).update({
-				dragging:true,
-				dragX:module.drawPad.POSITION.x-data.activeShape.offsetX,
-				dragY:module.drawPad.POSITION.y-data.activeShape.offsetY
-			},false);
+			data.activeShape.dragging=true;
+			data.activeShape.dragX=module.drawPad.POSITION.x-data.activeShape.offsetX;
+			data.activeShape.dragY=module.drawPad.POSITION.y-data.activeShape.offsetY;
 			dragging=true;
-			data.activeShape=data.db(data.activeShape).first();
+
 		}else if (data.activeGroup){
 			var options={
 					dragging:true,
 					dragX:module.drawPad.POSITION.x-data.activeGroup.offsetX,
-					dragY:module.drawPad.POSITION.y-data.activeGroup.offsetY,
+					dragY:module.drawPad.POSITION.y-data.activeGroup.offsetY
 				};
 			var deltaX=module.drawPad.POSITION.x;
 			var deltaY=module.drawPad.POSITION.y;
@@ -279,8 +277,9 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 					options.dragY=deltaY;
 				}
 			}
-			data.groups(data.activeGroup).update(options,false);
-			data.activeGroup=data.groups(data.activeGroup).first();
+			_.each(_.keys(options),function(t){
+				data.activeGroup[t]=options[t];
+			});
 			dragging=true;
 		}
 		module.drawPad.invalidate();
