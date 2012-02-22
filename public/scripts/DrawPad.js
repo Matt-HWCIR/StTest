@@ -283,17 +283,17 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		module.goToPage('Intro');
 		
 //		REMOVE
-		module.goToPage('Groups')
-		var numTestItems =0;
-		_.each(data.db, function(item){
-			if(numTestItems<4){
-				item.selected=true;
-				item.detailsEntered=true;
-				numTestItems++;
-			}
-
-		});
-		module.invalidate();
+//		module.goToPage('Groups')
+//		var numTestItems =0;
+//		_.each(data.db, function(item){
+//			if(numTestItems<4){
+//				item.selected=true;
+//				item.detailsEntered=true;
+//				numTestItems++;
+//			}
+//
+//		});
+//		module.invalidate();
 //		END REMOVE
 		
 		
