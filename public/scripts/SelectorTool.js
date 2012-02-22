@@ -123,9 +123,9 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 			if(data.activeShape){
 				var groupId=data.activeShape.groupId;
 				if(groupId){
-					selecteditems=_.each(data.db,function(t){ return t.selected==true && t.groupId==groupId});
-					_.each(data.db,function(item){
-						var topPriority=item==data.activeShape;
+					selecteditems=_.filter(data.db,function(t){ return t.selected===true && t.groupId===groupId});
+					_.each(selecteditems,function(item){
+						var topPriority=item===data.activeShape;
 						item.topPriority=topPriority;
 					});
 				}

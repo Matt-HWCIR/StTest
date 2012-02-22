@@ -785,7 +785,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			var priorityEntered = true;
 
 			_.each(data.groups,function(item){
-				var selectedItems=_.filter(data.db,function(t){return t.selected===true && t.groupId==item.id});
+				var selectedItems=_.filter(data.db,function(t){return t.selected===true && t.groupId===item.id});
 				var hasPriority=_.filter(selectedItems,function(t){return t.topPriority==true}).length>0;
 				if(!hasPriority && selectedItems.length>1){
 					priorityEntered=false;
