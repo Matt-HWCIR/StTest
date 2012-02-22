@@ -11,6 +11,17 @@ define(['data','libs/MathUtils'],function(data,MathUtils){
 		var radius=3.5;
 		var x=group.x;
 		var y=group.y;
+		var w=group.w;
+		var h=group.h;
+
+		var minSize=125;
+
+		if(h < minSize){
+			h=minSize;
+		}
+		if(w < minSize){
+			w=minSize;
+		}
 		
 		if(group.dragging){
 			x=group.dragX;
@@ -38,7 +49,7 @@ define(['data','libs/MathUtils'],function(data,MathUtils){
 		ctx.strokeStyle='#ececec';
 		ctx.fillStyle='rgba('+r+','+g+','+b+',.2)';
 		ctx.beginPath();
-		ctx.rect(x,y,group.w,group.h);
+		ctx.rect(x,y,w,h);
 		ctx.fill();
 		ctx.stroke();
 		ctx.closePath();
@@ -48,22 +59,22 @@ define(['data','libs/MathUtils'],function(data,MathUtils){
 			ctx.strokeStyle='#d9d9d9';
 			ctx.fillStyle='#005695';
 			ctx.beginPath();
-			ctx.arc(x+group.w/2, y, radius, 0, 2 * Math.PI, false);
+			ctx.arc(x+w/2, y, radius, 0, 2 * Math.PI, false);
 			ctx.fill();	
 			ctx.stroke();
 			
 			ctx.beginPath();
-			ctx.arc(x+group.w/2, y+group.h, radius, 0, 2 * Math.PI, false);
+			ctx.arc(x+w/2, y+h, radius, 0, 2 * Math.PI, false);
 			ctx.fill();	
 			ctx.stroke();
 			
 			ctx.beginPath();
-			ctx.arc(x, y+group.h/2, radius, 0, 2 * Math.PI, false);
+			ctx.arc(x, y+h/2, radius, 0, 2 * Math.PI, false);
 			ctx.fill();	
 			ctx.stroke();
 			
 			ctx.beginPath();
-			ctx.arc(x+group.w, y+group.h/2, radius, 0, 2 * Math.PI, false);
+			ctx.arc(x+w, y+h/2, radius, 0, 2 * Math.PI, false);
 			ctx.fill();	
 			ctx.stroke();
 		}
@@ -86,9 +97,9 @@ define(['data','libs/MathUtils'],function(data,MathUtils){
 		
 		
 		if(group.detailsEntered==true){
-			ctx.drawImage(checkImage,x+group.w-15,y-9);	
+			ctx.drawImage(checkImage,x+w-15,y-9);	
 		}else{
-			ctx.drawImage(breakpointImage,x+group.w-15,y-9);
+			ctx.drawImage(breakpointImage,x+w-15,y-9);
 		}
 		
 		

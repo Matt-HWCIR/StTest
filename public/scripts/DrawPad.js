@@ -285,17 +285,17 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		module.goToPage('Intro');
 		
 //		REMOVE
-//		module.goToPage('Groups')
-//		var numTestItems =0;
-//		_.each(data.db, function(item){
-//			if(numTestItems<4){
-//				item.selected=true;
-//				item.detailsEntered=true;
-//				numTestItems++;
-//			}
-//
-//		});
-//		module.invalidate();
+		module.goToPage('Groups')
+		var numTestItems =0;
+		_.each(data.db, function(item){
+			if(numTestItems<4){
+				item.selected=true;
+				item.detailsEntered=true;
+				numTestItems++;
+			}
+
+		});
+		module.invalidate();
 //		END REMOVE
 		
 		
@@ -786,7 +786,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 
 			_.each(data.groups,function(item){
 				var selectedItems=_.filter(data.db,function(t){return t.selected===true && t.groupId==item.id});
-				var hasPriority=_.filter(selectedItems,function(t){return t.topPriority=true}).length>0;
+				var hasPriority=_.filter(selectedItems,function(t){return t.topPriority==true}).length>0;
 				if(!hasPriority && selectedItems.length>1){
 					priorityEntered=false;
 				}
