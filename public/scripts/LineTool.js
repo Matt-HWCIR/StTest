@@ -40,14 +40,18 @@ define(['data'],function(data){
 	
 	
 	module.doubleTap=function(event){
-		if(data.activeLine){
+		dragging=false;
+		var hitLine=module.drawPad.hitTest(module.drawPad.POSITION,data.lines);
+
+		if(hitLine){
 			var doDelete=confirm('Are you sure you want to delete the connection from "'
-					+data.activeLine.start+'" to "'+data.activeLine.end+'"?');
+					+hitLine.start+'" to "'+hitLine.end+'"?');
 			if(doDelete){
-				data.lines= _.filter(data.lines,function(t){ t!=data.activeLine});
+				data.lines= _.filter(data.lines,function(t){ return t!=hitLine});
 				data.activeLine=null;
-				module.drawPad.invalidate();
 			}
+			data.lineStartShape=null;
+			module.drawPad.invalidate();
 		}
 	};
 	

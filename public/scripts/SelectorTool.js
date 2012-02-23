@@ -10,6 +10,8 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 		var hitLine=module.drawPad.hitTest(module.drawPad.POSITION,data.lines);
 		if(hitLine){
 			data.activeLine=hitLine;
+		}else{
+			data.activeLine=null;
 		}
 		if(data.activeLine  && module.drawPad.canChangeDirection==true){
 			if(data.activeLine.direction=='StartToEnd'){
