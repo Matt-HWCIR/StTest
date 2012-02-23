@@ -281,20 +281,22 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		
 		// Go To First Page
 		module.goToPage('Intro');
-		
-//		REMOVE
-//		module.goToPage('Groups')
-//		var numTestItems =0;
-//		_.each(data.db, function(item){
-//			if(numTestItems<4){
-//				item.selected=true;
-//				item.detailsEntered=true;
-//				numTestItems++;
-//			}
-//
-//		});
-//		module.invalidate();
-//		END REMOVE
+
+		// Debug?
+		var debugMode=false;
+		if(debugMode==true){
+			module.goToPage('Connections')
+			var numTestItems =0;
+			_.each(data.db, function(item){
+				if(numTestItems<4){
+					item.selected=true;
+					item.detailsEntered=true;
+					numTestItems++;
+				}
+
+			});
+			module.invalidate();
+		}
 		
 		
 	};
