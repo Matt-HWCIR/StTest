@@ -1,5 +1,5 @@
 define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
-	var module={};
+    var module={};
 	var dragging=false;
 	var edgeBuffer=30;
 	module.drawPad=null;
@@ -54,9 +54,9 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 					
 					if(hitShape){
 						if(index>hitShape.index){
-							index=hitShape.index-.001;
+							index=hitShape.index-0.001;
 						}else{
-							index=hitShape.index+.001;
+							index=hitShape.index+0.001;
 						}
 
 					}
@@ -147,7 +147,6 @@ define(['data','SymptomTray','libs/animate'],function(data,SymptomTray,animate){
 				maxzindex=maxOb.zindex+1;
 			}
 
-			console.log('shape: '+data.activeShape.name+' - index='+maxzindex);
 			data.activeShape.zindex=maxzindex;
 			data.activeShape.offsetX=module.drawPad.POSITION.x-data.activeShape.x;
 			data.activeShape.offsetY=module.drawPad.POSITION.y-data.activeShape.y;

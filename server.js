@@ -25,13 +25,23 @@ app.get('/',function(req,res){
 
 app.post('/saveFile',function(req,res){
     var pn=req.body.participantNumber;
-	var surveyId=req.body.surveyId;
+    var surveyId=req.body.surveyId;
     var xmlFile=pn+'/'+surveyId+"/Results.xml";
     var pngFile=pn+'/'+surveyId+"/FinalDiagram.png";
     amz.putFile(xmlFile,req.body.xml);
     amz.putFile(pngFile,amz.convertToImage(req.body.diagram),function (err){
         res.send({error:err});
     });
+});
+
+
+app.post('/saveTextResults',function(req,res){
+	var pn=req.body.participantNumber;
+	var surveyId=req.body.surveyId;
+	var xmlFile=pn+'/'+surveyId+"/Results.xml";
+	amz.putFile(xmlFile,req.body.xml,function (err){
+		res.send({error:err});
+	});
 });
 
 app.post('/saveScreen',function(req,res){

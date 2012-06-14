@@ -1,5 +1,5 @@
 define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool','LineTool','GroupTool','SymptomTray','SelectedTray','libs/animate','libs/data2xml'],
-			function(data,DrawUtils,LineShape,SymptomShape,GroupShape,SelectorTool,LineTool,GroupTool,SymptomTray,SelectedTray,animate,data2xml){
+    		function(data,DrawUtils,LineShape,SymptomShape,GroupShape,SelectorTool,LineTool,GroupTool,SymptomTray,SelectedTray,animate,data2xml){
 	
 	var module={};
 	var container=null;
@@ -57,8 +57,6 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
                 if(chime.currentTime>0){
                     chime.pause();
                     chime.currentTime=0;
-                }else{
-                    chime.load();
                 }
 				chime.play();
 			}catch(x){
@@ -404,8 +402,9 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			
 		}
 	};
-	
-	module.saveResults=function(){
+
+
+	module.getTextResults=function(){
 		var results={};
 		results.participantNumber=participantNumber;
 		results.diagramIsAccurate=data.diagramIsAccurate;
@@ -451,12 +450,46 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 				toSymptom:item.end
 			});
 		});
-		
-		var xml=data2xml('results',results);
 
+		var xml=data2xml('results',results);
+		return xml;
+	};
+
+	module.saveTextResults=function(){
+		var screenName=currentPage;
+		if(screenName!='Intro' && screenName!=null && screenName!='Review'){
+			var dataToSend={
+				xml:module.getTextResults(),
+				participantNumber:participantNumber,
+				surveyId:data.surveyId
+			};
+			var dataToSendStr=JSON.stringify(dataToSend);
+
+			var settings={
+				processData:false,
+				url: 'saveTextResults',
+				success: function(data){
+					console.log('success');
+				},
+				error: function(err,textStatus,errorThrown){
+					console.log('error saving data');
+					console.log('error textStatus: '+textStatus);
+					console.log('error errorThrown: '+errorThrown);
+				},
+				dataType:'json',
+				contentType:'application/json',
+				type:'POST',
+				data:dataToSendStr
+			};
+			$.ajax(settings);
+		}
+	};
+
+
+	module.saveResults=function(){
 		var diagram=canvas.toDataURL('image/png');
 		var dataToSend={
-            xml:xml,
+            xml:module.getTextResults(),
             participantNumber:participantNumber,
             diagram:diagram,
 			surveyId:data.surveyId
@@ -548,10 +581,12 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 			item.detailsEntered=false;
 			item.cause='';
 			item.better='';
+			item.worse='';
 			item.drBetter='';
 			item.drWorse='';
 			item.effect='';
 			item.zindex=0;
+			item.groupName='';
 			item.index = index;
 			index++;
 		});
@@ -564,7 +599,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 		data.reachedReview=false;
 		data.diagramIsAccurate=false;
 		data.surveyId=module.printDate();
-		
+
 		module.reposition(true);
 		
 		module.invalidate();
@@ -581,6 +616,7 @@ define(['data','DrawUtils','LineShape','SymptomShape','GroupShape','SelectorTool
 
 
 		module.saveScreen();
+		module.saveTextResults();
 
 		if(pageName=='Intro'){
 			$('#participantNumber').attr('value','');

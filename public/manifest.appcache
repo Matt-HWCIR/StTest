@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# Version 95.9
+# Version 96.4
 
 CACHE:
 
@@ -10,7 +10,6 @@ css/bootstrap.css
 css/app.css
 
 scripts/libs/jquery-1.6.4.min.js
-scripts/libs/less-1.1.5.min.js
 scripts/libs/jquery-ui-1.8.16.js
 scripts/libs/touchable.js
 scripts/libs/underscore.js
